@@ -6,18 +6,18 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    mail = Column(String, nullable=False)
+    mail = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
 
 class Role(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
 
 class Type(Base):
     __tablename__ = "types"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
 
 class Assignment(Base):
     __tablename__ = "assignments"
@@ -26,7 +26,7 @@ class Assignment(Base):
     role_id = Column(Integer, ForeignKey("roles.id"))
     type_id = Column(Integer, ForeignKey("types.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
-    
+
     role = relationship("Role")
     type = relationship("Type")
     user = relationship("User")

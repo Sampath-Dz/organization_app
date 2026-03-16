@@ -1,16 +1,10 @@
-from sqlalchemy.orm import sessionmaker
+from passlib.context import CryptContext
 
-from .models.db_base import engine
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
-SessionLocal=sessionmaker(bind=engine)
-
-
-def get_db():
-
-    db=SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    
+    return pwd_context.verify(plain_password, hashed_password)

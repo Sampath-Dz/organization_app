@@ -1,11 +1,20 @@
-from jose import jwt
 from datetime import datetime, timedelta
-from ..globals import SECRET, ALGORITHM
-from ..settings import ACCESS_TOKEN_EXPIRE_MINUTES
+from jose import jwt
 
-def create_token(user_id: int):
-    payload = {
-        "sub": user_id,
-        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    }
-    return jwt.encode(payload, SECRET, algorithm=ALGORITHM)
+SECRET_KEY = "mysecretkey"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+class TokenService:
+
+    @staticmethod
+    def create_access_token(data: dict, expires_delta: int = ACCESS_TOKEN_EXPIRE_MINUTES):
+        to_encode = data.copy()
+        expire = datetime.utcnow() + timedelta(minutes=expires_delta)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
+
+    @staticmethod
+    def decode_access_token(token: str):
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

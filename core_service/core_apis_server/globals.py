@@ -1,0 +1,4 @@
+from core_apis_server.settings import JWT_SECRET, JWT_ALGORITHM
+
+SECRET = JWT_SECRET
+ALGORITHM = JWT_ALGORITHM

@@ -3,21 +3,19 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "auth_service"
+name = "core_service"
 version = "0.1.0"
-description = "Authentication Service for Organization Application"
+description = "Core Service for Organization Application"
 authors = [
-    { name="Chandaka Sampath kumar", email="chandakasampath12@gmail.com" }
+    { name = "Chandaka Sampath kumar", email = "chandakasampath12@gmail.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.14.2"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi",
     "uvicorn",
     "sqlalchemy",
     "pydantic",
-    "python-jose",
-    "passlib[bcrypt]",
     "psycopg2-binary",
     "alembic"
 ]
