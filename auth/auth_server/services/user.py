@@ -1,28 +1,18 @@
 from .base import BaseService
 from ..models.models import User
-from ..exceptions import UserAlreadyExists
 from ..utils import hash_password
 
-
-
 class UserService(BaseService):
-
-    def create_user(self,db,data):
-
-        existing=db.query(User).filter(User.mail==data.mail).first()
-
-        if existing:
-
-            raise UserAlreadyExists()
-
-        user=User(
-
+    def create_user(self, data):
+        user = User(
             name=data.name,
-
             mail=data.mail,
-
             password=hash_password(data.password)
-
         )
+        return self.create(user)
 
-        return self.create(db,user)
+    def get_users(self):
+        return self.db.query(User).all()
+
+    def get_user(self, user_id):
+        return self.db.query(User).filter(User.id == user_id).first()

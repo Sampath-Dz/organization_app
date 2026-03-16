@@ -1,49 +1,32 @@
-from sqlalchemy import Column,String,Integer,ForeignKey
-from .base_model import BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from .db_base import Base
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    mail = Column(String, nullable=False)
+    password = Column(String, nullable=False)
 
-class User(BaseModel):
+class Role(Base):
+    __tablename__ = "roles"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
 
-    __tablename__="users"
+class Type(Base):
+    __tablename__ = "types"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
 
-    name=Column(String)
-
-    mail=Column(String,unique=True)
-
-    password=Column(String)
-
-    last_login=Column(String)
-
-
-
-class Role(BaseModel):
-
-    __tablename__="roles"
-
-    name=Column(String)
-
-    description=Column(String)
-
-
-
-class Type(BaseModel):
-
-    __tablename__="types"
-
-    name=Column(String)
-
-    description=Column(String)
-
-
-
-class Assignment(BaseModel):
-
-    __tablename__="assignments"
-
-    user_id=Column(Integer,ForeignKey("users.id"))
-
-    role_id=Column(Integer,ForeignKey("roles.id"))
-
-    type_id=Column(Integer,ForeignKey("types.id"))
-
-    resource_id=Column(Integer)
+class Assignment(Base):
+    __tablename__ = "assignments"
+    id = Column(Integer, primary_key=True)
+    resource_id = Column(Integer, nullable=False)
+    role_id = Column(Integer, ForeignKey("roles.id"))
+    type_id = Column(Integer, ForeignKey("types.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    
+    role = relationship("Role")
+    type = relationship("Type")
+    user = relationship("User")

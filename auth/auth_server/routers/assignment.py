@@ -1,53 +1,17 @@
-from fastapi import APIRouter,Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from ..schemas.assignment import AssignmentCreate, AssignmentRead
+from ..services.assignment import AssignmentService
+from ..models.db_factory import get_db
 
-from ..utils import get_db
-from ..models.models import Assignment
+router = APIRouter(prefix="/auth/v1/assignments", tags=["Assignments"])
 
-router=APIRouter(prefix="/auth/v1/assignments")
+@router.post("", response_model=AssignmentRead)
+def create_assignment(data: AssignmentCreate, db: Session = Depends(get_db)):
+    service = AssignmentService(db)
+    return service.create_assignment(data)
 
-
-@router.get("")
-def get_assignments(db:Session=Depends(get_db)):
-
-    return db.query(Assignment).all()
-
-from fastapi import APIRouter,Depends
-from sqlalchemy.orm import Session
-
-from ..utils import get_db
-from ..models.models import Assignment
-
-router=APIRouter(prefix="/auth/v1/assignments")
-
-
-@router.post("")
-def create_assignment(data:dict,db:Session=Depends(get_db)):
-
-    assignment=Assignment(**data)
-
-    db.add(assignment)
-
-    db.commit()
-
-    db.refresh(assignment)
-
-    return assignment
-
-
-@router.get("")
-def get_assignments(db:Session=Depends(get_db)):
-
-    return db.query(Assignment).all()
-
-
-@router.delete("/{id}")
-def delete_assignment(id:int,db:Session=Depends(get_db)):
-
-    obj=db.query(Assignment).filter(Assignment.id==id).first()
-
-    db.delete(obj)
-
-    db.commit()
-
-    return {"message":"deleted"}
+@router.get("", response_model=list[AssignmentRead])
+def list_assignments(db: Session = Depends(get_db)):
+    service = AssignmentService(db)
+    return service.get_assignments()

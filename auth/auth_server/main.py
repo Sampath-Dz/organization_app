@@ -1,24 +1,17 @@
 from fastapi import FastAPI
+from auth_server.routers import router  
+import uvicorn
 
-from .routers import router
-from .models.db_base import Base, engine
+def create_app() -> FastAPI:
+    app = FastAPI(title="Auth Service")
 
+   
+    app.include_router(router)
 
-app = FastAPI(title="Auth Service")
+    return app
 
-
-Base.metadata.create_all(bind=engine)
-
-
-app.include_router(router)
-
+app = create_app()
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        "auth.auth_server.main:app",
-        host="0.0.0.0",
-        port=8001,
-        reload=True
-    )
+    
+    uvicorn.run("auth_server.main:app", host="127.0.0.1", port=8001, reload=True)
