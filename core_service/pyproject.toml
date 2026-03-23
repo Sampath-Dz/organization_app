@@ -6,9 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "core_service"
 version = "0.1.0"
 description = "Core Service for Organization Application"
-authors = [
-    { name = "Chandaka Sampath kumar", email = "chandakasampath12@gmail.com" }
-]
+
+
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

@@ -1,32 +1,57 @@
-from sqlalchemy.orm import Session
-from ..models.models import Organization
-from ..crud.generic import create_item, get_all_items, get_item, update_item, delete_item
+from core_service.core_apis_server.services.base import BaseService
+from core_service.core_apis_server.models.models import Organization
+from core_service.core_apis_server.schemas.org import OrganizationCreate, OrganizationUpdate
+from core_service.core_apis_server.exceptions import NotFoundException, AlreadyExistsException
 
-class OrganizationService:
-    def __init__(self, db: Session):
-        self.db = db
 
-    def create_organization(self, data: dict):
-        return create_item(self.db, Organization, data)
+class OrganizationService(BaseService):
+
+    def create_organization(self, data: OrganizationCreate):
+        existing = self.db.query(Organization).filter(
+            Organization.name == data.name
+        ).first()
+
+        if existing:
+            raise AlreadyExistsException("Organization already exists")
+
+        org = Organization(
+            name=data.name.strip()
+        )
+
+        return self.create(org)
 
     def get_organizations(self):
-        return get_all_items(self.db, Organization)
+        return self.db.query(Organization).all()
 
     def get_organization(self, org_id: int):
-        return get_item(self.db, Organization, org_id)
+        org = self.db.query(Organization).filter(
+            Organization.id == org_id
+        ).first()
 
-    def update_organization(self, org_id: int, data: dict):
-        org = self.get_organization(org_id)
         if not org:
-            return None
-        for key, value in data.items():
-            setattr(org, key, value)
-        update_item(self.db)
+            raise NotFoundException("Organization not found")
+
         return org
+
+    def update_organization(self, org_id: int, data: OrganizationUpdate):
+        org = self.get_organization(org_id)
+
+        if data.name is not None:
+            existing = self.db.query(Organization).filter(
+                Organization.name == data.name
+            ).first()
+
+            if existing and existing.id != org_id:
+                raise AlreadyExistsException("Organization name already exists")
+
+            org.name = data.name.strip()
+
+        return self.update(org)
+
+    def patch_organization(self, org_id: int, data: OrganizationUpdate):
+        return self.update_organization(org_id, data)
 
     def delete_organization(self, org_id: int):
         org = self.get_organization(org_id)
-        if not org:
-            return False
-        delete_item(self.db, org)
+        self.delete(org)
         return True

@@ -1,16 +1,20 @@
-[tool.poetry]
-name = "auth_service"
-version = "0.1.0"
-description = "Authentication service for organization app"
-authors = ["Chandaka Sampath <chandakasampath12@gmail.com>"]
+    [tool.poetry]
+    name = "auth_service"
+    version = "0.1.0"
+    description = "Authentication service for organization app"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-fastapi = "^0.110"
-sqlalchemy = "^2.0"
-pydantic = "^2.3"
-psycopg2-binary = "^2.9"
-alembic = "^1.11"
+    [tool.poetry.dependencies]
+    python = "^3.11"
+    fastapi = "^0.110"
+    uvicorn = "^0.29"
+    sqlalchemy = "^2.0"
+    pydantic = "^2.3"
+    psycopg2-binary = "^2.9"
+    alembic = "^1.11"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.4"
+    [tool.poetry.group.dev.dependencies]
+    pytest = "^7.4"
+
+    [build-system]
+    requires = ["poetry-core"]
+    build-backend = "poetry.core.masonry.api"

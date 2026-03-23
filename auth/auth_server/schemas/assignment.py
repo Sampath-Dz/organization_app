@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+
+from pydantic import BaseModel, ConfigDict
+
 
 class AssignmentCreate(BaseModel):
     resource_id: int
@@ -6,11 +8,17 @@ class AssignmentCreate(BaseModel):
     type_id: int
     user_id: int
 
-class AssignmentRead(BaseModel):
+
+class AssignmentResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     resource_id: int
     role_id: int
     type_id: int
     user_id: int
 
-    model_config = {"from_attributes": True}
+
+class AssignmentListResponse(BaseModel):
+    assignments: list[AssignmentResponse]
+    total: int

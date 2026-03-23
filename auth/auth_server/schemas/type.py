@@ -1,10 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from typing import Optional
+
 
 class TypeCreate(BaseModel):
     name: str
 
-class TypeRead(BaseModel):
+
+class TypeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
 
-    model_config = {"from_attributes": True}
+
+class TypeListResponse(BaseModel):
+    types: list[TypeResponse]
+    total: int

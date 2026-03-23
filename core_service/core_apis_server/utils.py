@@ -1,10 +1,8 @@
-from passlib.context import CryptContext
+from sqlalchemy import inspect
+from datetime import datetime, timezone
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def as_dict(obj) -> dict:
+    return {column.key: getattr(obj, column.key) for column in inspect(obj).mapper.column_attrs}
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    
-    return pwd_context.verify(plain_password, hashed_password)
+def get_current_timestamp() -> int:
+    return int(datetime.now(timezone.utc).timestamp())

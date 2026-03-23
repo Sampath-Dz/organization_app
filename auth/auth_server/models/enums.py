@@ -6,6 +6,5 @@ class RoleEnum(str, Enum):
     user = "user"
 
 class TypeEnum(str, Enum):
-    admin = "admin"
-    user = "user"
-    viewer = "viewer"
+    organization = "organization"
+    team = "team"

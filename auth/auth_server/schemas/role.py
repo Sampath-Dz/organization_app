@@ -1,10 +1,18 @@
-from pydantic import BaseModel
+
+from pydantic import BaseModel, ConfigDict
+
 
 class RoleCreate(BaseModel):
     name: str
 
-class RoleRead(BaseModel):
+
+class RoleResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
 
-    model_config = {"from_attributes": True}
+
+class RoleListResponse(BaseModel):
+    roles: list[RoleResponse]
+    total: int

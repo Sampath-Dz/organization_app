@@ -1,21 +1,23 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from core_service.core_apis_server.models.db_postgre import PostgresDB
+from core_service.core_apis_server.settings import settings
 
-from core_apis_server.settings import DATABASE_URL
+class DBFactory:
+    _instance = None
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+    def __new__(cls):
+        if cls._instance is None:
+            instance = super().__new__(cls)
+            db_url = (
+                f"postgresql+psycopg2://{settings.DB_USER}:{settings.DB_PASSWORD}"
+                f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}?sslmode=require"
+            )
+            instance.db = PostgresDB(db_url)
+            cls._instance = instance
+        return cls._instance
 
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
-
-def get_db():
-
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
+    def get_db(self):
+        session = self.db.session()
+        try:
+            yield session
+        finally:
+            session.remove()

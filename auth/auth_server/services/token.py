@@ -5,6 +5,7 @@ SECRET_KEY = "mysecretkey"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
+
 class TokenService:
 
     @staticmethod
@@ -12,8 +13,7 @@ class TokenService:
         to_encode = data.copy()
         expire = datetime.utcnow() + timedelta(minutes=expires_delta)
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-        return encoded_jwt
+        return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     @staticmethod
     def decode_access_token(token: str):

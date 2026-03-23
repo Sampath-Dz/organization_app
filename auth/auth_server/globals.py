@@ -1,5 +1,12 @@
-from .settings import JWT_SECRET, JWT_ALGO, ACCESS_TOKEN_EXPIRE_MINUTES
+import logging
 
-SECRET = JWT_SECRET
-ALGORITHM = JWT_ALGO
-ACCESS_EXPIRE_MINUTES = ACCESS_TOKEN_EXPIRE_MINUTES
+SECRET_KEY = "supersecret"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+def configure_logging(debug: bool = False):
+    level = logging.DEBUG if debug else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )

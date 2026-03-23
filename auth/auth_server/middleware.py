@@ -1,10 +1,14 @@
-from starlette.middleware.base import BaseHTTPMiddleware
+import logging
 import time
+from starlette.middleware.base import BaseHTTPMiddleware
+
+LOG = logging.getLogger(__name__)
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         start = time.time()
+        LOG.info("→ %s %s", request.method, request.url.path)
         response = await call_next(request)
-        end = time.time()
-        print(f"{request.method} {request.url} {end-start:.4f}s")
+        duration = (time.time() - start) * 1000
+        LOG.info("← %s %s %s (%.2f ms)", request.method, request.url.path, response.status_code, duration)
         return response

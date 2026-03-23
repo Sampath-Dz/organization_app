@@ -1,39 +1,33 @@
 from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
-from alembic import context
 import sys
 import os
+
 from dotenv import load_dotenv
 load_dotenv()
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
 
-sys.path.append(os.path.abspath(".."))
+from sqlalchemy import engine_from_config, pool
+from alembic import context
 
-from models.db_base import Base
-import models.models
+from auth.auth_server.models.db_base import Base
+import auth.auth_server.models.models
 
-
-
+from auth.auth_server.settings import settings
 
 config = context.config
-
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
 
-
-from settings import DATABASE_URL
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.get_database_url())
 
 
-def run_migrations_offline() -> None:
-   
+def run_migrations_offline():
     url = config.get_main_option("sqlalchemy.url")
+
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -45,8 +39,7 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
-   
+def run_migrations_online():
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -55,7 +48,8 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata
         )
 
         with context.begin_transaction():

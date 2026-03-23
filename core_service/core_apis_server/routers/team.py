@@ -1,44 +1,68 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from core_apis_server.models.models import Team
-from core_apis_server.models.db_factory import get_db
-from core_apis_server.crud.generic import create_item, get_all_items, get_item, update_item, delete_item
+from typing import List
+
+from core_service.core_apis_server.schemas.team import (
+    TeamCreate,
+    TeamRead,
+    TeamUpdate
+)
+from core_service.core_apis_server.services.team import TeamService
+from core_service.core_apis_server.models.db_factory import DBFactory
+
 
 router = APIRouter(prefix="/core/v1/teams", tags=["Teams"])
 
-@router.post("")
-def create_team(data: dict, db: Session = Depends(get_db)):
-    return create_item(db, Team, data)
 
-@router.get("")
-def list_teams(db: Session = Depends(get_db)):
-    return get_all_items(db, Team)
+def get_service(db: Session = Depends(DBFactory().get_db)):
+    return TeamService(db)
 
-@router.get("/{team_id}")
-def get_team(team_id: int, db: Session = Depends(get_db)):
-    team = get_item(db, Team, team_id)
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return team
 
-@router.put("/{team_id}")
-def update_team(team_id: int, data: dict, db: Session = Depends(get_db)):
-    team = get_item(db, Team, team_id)
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return update_item(db, team, data)
+@router.post("", response_model=TeamRead, status_code=status.HTTP_201_CREATED)
+def create_team(
+    data: TeamCreate,
+    service: TeamService = Depends(get_service)
+):
+    return service.create_team(data)
 
-@router.patch("/{team_id}")
-def patch_team(team_id: int, data: dict, db: Session = Depends(get_db)):
-    team = get_item(db, Team, team_id)
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return update_item(db, team, data)
 
-@router.delete("/{team_id}")
-def delete_team(team_id: int, db: Session = Depends(get_db)):
-    team = get_item(db, Team, team_id)
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found")
-    delete_item(db, team)
-    return {"detail": "Deleted successfully"}
+@router.get("", response_model=List[TeamRead])
+def list_teams(
+    service: TeamService = Depends(get_service)
+):
+    return service.get_teams()
+
+
+@router.get("/{team_id}", response_model=TeamRead)
+def get_team(
+    team_id: int,
+    service: TeamService = Depends(get_service)
+):
+    return service.get_team(team_id)
+
+
+@router.put("/{team_id}", response_model=TeamRead)
+def update_team(
+    team_id: int,
+    data: TeamUpdate,
+    service: TeamService = Depends(get_service)
+):
+    return service.update_team(team_id, data)
+
+
+@router.patch("/{team_id}", response_model=TeamRead)
+def patch_team(
+    team_id: int,
+    data: TeamUpdate,
+    service: TeamService = Depends(get_service)
+):
+    return service.patch_team(team_id, data)
+
+
+@router.delete("/{team_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_team(
+    team_id: int,
+    service: TeamService = Depends(get_service)
+):
+    service.delete_team(team_id)
+    return {"detail": "Team deleted"}

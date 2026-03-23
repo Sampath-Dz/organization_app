@@ -1,18 +1,36 @@
 import os
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-load_dotenv()
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-DB_HOST=os.getenv("DB_HOST")
-DB_PORT=os.getenv("DB_PORT")
-DB_NAME=os.getenv("DB_NAME")
-DB_USER=os.getenv("DB_USER")
-DB_PASSWORD=os.getenv("DB_PASSWORD")
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=os.path.join(BASE_DIR, ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
-DATABASE_URL=f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
+    DB_HOST: str
+    DB_PORT: int
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_NAME: str
 
-AUTH_PORT=int(os.getenv("AUTH_PORT"))
+    JWT_SECRET: str
+    JWT_ALGO: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-JWT_SECRET=os.getenv("JWT_SECRET")
-JWT_ALGO=os.getenv("JWT_ALGO")
-ACCESS_TOKEN_EXPIRE_MINUTES=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+    CORE_APP_TITLE: str = "Core Service"
+    CORE_APP_VERSION: str = "1.0.0"
+    CORE_APP_HOST: str = "127.0.0.1"
+    CORE_APP_PORT: int = 8002
+    CORE_DEBUG: bool = True
+
+    @property
+    def DATABASE_URL(self) -> str:
+        return (
+            f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}?sslmode=require"
+        )
+
+settings = Settings()
