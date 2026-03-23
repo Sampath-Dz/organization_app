@@ -1,36 +1,48 @@
-import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=os.path.join(BASE_DIR, ".env"),
+        env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
 
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASSWORD: str
-    DB_NAME: str
+    MYSQL_DB_HOST: str = "ep-quiet-thunder-a4hp2h7b.us-east-1.aws.neon.tech"
+    MYSQL_DB_PORT: int = 5432
+    MYSQL_DB_USER_NAME: str = "neondb_owner"
+    MYSQL_DB_USER_PASSWORD: str = "npg_j7aVLnXq4SiU"
+    MYSQL_DB_NAME: str = "neondb"
 
-    JWT_SECRET: str
-    JWT_ALGO: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    def auth_db_params(self) -> tuple:
+        return (
+            self.MYSQL_DB_USER_NAME,
+            self.MYSQL_DB_USER_PASSWORD,
+            self.MYSQL_DB_HOST,
+            self.MYSQL_DB_NAME,
+            self.MYSQL_DB_PORT,
+        )
 
-    CORE_APP_TITLE: str = "Core Service"
-    CORE_APP_VERSION: str = "1.0.0"
-    CORE_APP_HOST: str = "127.0.0.1"
-    CORE_APP_PORT: int = 8002
-    CORE_DEBUG: bool = True
+    JWT_SECRET_KEY: str = "change-me-in-production"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    APP_TITLE: str = "Auth Service"
+    APP_VERSION: str = "1.0.0"
+    APP_HOST: str = "0.0.0.0"
+    APP_PORT: int = 8000
+    DEBUG: bool = True
+
+    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+
+    DEFAULT_PAGE_SIZE: int = 20
+    MAX_PAGE_SIZE: int = 100
 
     @property
     def DATABASE_URL(self) -> str:
         return (
-            f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}?sslmode=require"
+            f"postgresql+psycopg2://{self.MYSQL_DB_USER_NAME}:{self.MYSQL_DB_USER_PASSWORD}"
+            f"@{self.MYSQL_DB_HOST}:{self.MYSQL_DB_PORT}/{self.MYSQL_DB_NAME}?sslmode=require"
         )
 
 settings = Settings()

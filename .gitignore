@@ -2,7 +2,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# virtual env
 venv/
 env/
 .venv/
@@ -10,22 +9,16 @@ env/
 .vscode/
 .idea/
 
-# env files
 .env
 
-# logs
 *.log
 
-# OS
 .DS_Store
 
-# build
 build/
 dist/
 *.egg-info/
 
-# pytest
 .pytest_cache/
 
-# migrations
 alembic/versions/*.pyc

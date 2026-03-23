@@ -8,7 +8,7 @@ class PostgresDB(BaseDB):
 
     def _get_engine(self):
         return create_engine(
-            settings.get_database_url(),
+            settings.DATABASE_URL,
             pool_pre_ping=True
         )
 
