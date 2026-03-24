@@ -10,6 +10,7 @@ Base = declarative_base()
 
 
 class BaseDB:
+    
 
     def __init__(self, config=None, scopefunc=None):
         self._engine = None
@@ -23,7 +24,7 @@ class BaseDB:
             self._engine = self._get_engine()
         return self._engine
 
-    def get_session(self):
+    def session(self) -> scoped_session:
         if not self._session:
             self._session = scoped_session(
                 sessionmaker(bind=self.engine),
@@ -37,6 +38,7 @@ class BaseDB:
         retry=retry_if_exception_type(Exception)
     )
     def create_all(self):
+        
         Base.metadata.create_all(self.engine)
 
     def drop_all(self):
@@ -44,12 +46,12 @@ class BaseDB:
 
     def ping(self) -> bool:
         try:
-            with self.engine.connect() as connection:
-                connection.execute(text("SELECT 1"))
+            with self.engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
             return True
         except Exception as e:
             LOG.error("Database ping failed: %s", e)
             return False
 
-    def _get_engine(self):
+    def _get_engine(self) -> Engine:
         raise NotImplementedError

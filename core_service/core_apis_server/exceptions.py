@@ -62,3 +62,8 @@ class ConflictException(CoreException):
 
 class WrongArgumentsException(CoreException):
     http_status = HTTPStatus.BAD_REQUEST
+
+class InvalidTokenException(CoreException):
+    http_status = HTTPStatus.UNAUTHORIZED
+    def __init__(self, detail: str = None):
+        super().__init__(error=Err.OC0008, detail=detail)

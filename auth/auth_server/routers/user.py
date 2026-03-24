@@ -5,7 +5,7 @@ from typing import List
 
 from auth.auth_server.schemas.user import UserCreate, UserRead, UserUpdate
 from auth.auth_server.services.user import UserService
-from auth.auth_server.models.db_factory import get_db
+from auth.auth_server.dependencies import get_db
 
 
 router = APIRouter(prefix="/auth/v1/users", tags=["Users"])

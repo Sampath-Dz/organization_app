@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Tuple, List
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     MYSQL_DB_USER_PASSWORD: str = "npg_j7aVLnXq4SiU"
     MYSQL_DB_NAME: str = "neondb"
 
-    def auth_db_params(self) -> tuple:
+    def auth_db_params(self) -> Tuple[str, str, str, str, int]:
         return (
             self.MYSQL_DB_USER_NAME,
             self.MYSQL_DB_USER_PASSWORD,
@@ -33,7 +34,7 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     DEBUG: bool = True
 
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
 
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100

@@ -1,4 +1,5 @@
 import logging
+import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,7 +43,6 @@ def health():
     return {"status": "ok", "db": postgres_db.ping()}
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(
         "auth.auth_server.main:app",
         host=settings.APP_HOST,

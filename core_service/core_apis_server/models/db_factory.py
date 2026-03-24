@@ -1,4 +1,4 @@
-from core_service.core_apis_server.models.db_postgre import PostgresDB
+from core_service.core_apis_server.models.db_base import BaseDB
 from core_service.core_apis_server.settings import settings
 
 class DBFactory:
@@ -11,7 +11,7 @@ class DBFactory:
                 f"postgresql+psycopg2://{settings.DB_USER}:{settings.DB_PASSWORD}"
                 f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}?sslmode=require"
             )
-            instance.db = PostgresDB(db_url)
+            instance.db = BaseDB(db_url)
             cls._instance = instance
         return cls._instance
 
@@ -21,3 +21,5 @@ class DBFactory:
             yield session
         finally:
             session.remove()
+
+postgres_db = DBFactory().db

@@ -1,4 +1,3 @@
-
 import enum
 from http import HTTPStatus
 
@@ -59,3 +58,8 @@ class ConflictException(AuthException):
 
 class WrongArgumentsException(AuthException):
     http_status = HTTPStatus.BAD_REQUEST
+
+class InvalidTokenException(AuthException):
+    http_status = HTTPStatus.UNAUTHORIZED
+    def __init__(self, detail: str = "Invalid token"):
+        super().__init__(Err.AUTH0008, detail=detail)

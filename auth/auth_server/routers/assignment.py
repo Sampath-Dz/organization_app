@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from auth.auth_server.services.assignment import AssignmentService
 from auth.auth_server.schemas.assignment import AssignmentCreate
-from auth.auth_server.models.db_factory import get_db
+from auth.auth_server.dependencies import get_db
 
 
 router = APIRouter(prefix="/auth/v1/assignments", tags=["Assignments"])

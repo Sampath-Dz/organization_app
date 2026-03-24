@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from auth.auth_server.services.token import TokenService
-from auth.auth_server.models.db_factory import get_db
+from auth.auth_server.dependencies import get_db
 
 
 router = APIRouter(prefix="/auth/v1/token", tags=["Token"])

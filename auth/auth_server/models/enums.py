@@ -8,3 +8,7 @@ class RoleEnum(str, Enum):
 class TypeEnum(str, Enum):
     organization = "organization"
     team = "team"
+
+class TokenType(Enum): 
+    ACCESS  = 'access'
+    REFRESH = 'refresh'

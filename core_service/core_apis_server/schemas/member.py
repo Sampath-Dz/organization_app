@@ -1,20 +1,21 @@
-from pydantic import field_validator
-from typing import Optional
+from pydantic import BaseModel, ConfigDict
 
-from core_service.core_apis_server.schemas.base import BaseSchema
+class MemberCreate(BaseModel):
+    auth_user_id: str
+    team_id: str
 
+class MemberUpdate(BaseModel):
+    auth_user_id: Optional[str] = None
+    team_id: Optional[str] = None
 
-class MemberCreate(BaseSchema):
-    auth_user_id: int
-    team_id: int
+class MemberResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    auth_user_id: str
+    team_id: str
+    created_at: int
+    deleted_at: int
 
-
-class MemberUpdate(BaseSchema):
-    auth_user_id: Optional[int] = None
-    team_id: Optional[int] = None
-
-
-class MemberRead(BaseSchema):
-    id: int
-    auth_user_id: int
-    team_id: int
+class MemberListResponse(BaseModel):
+    members: list[MemberResponse]
+    total: int
