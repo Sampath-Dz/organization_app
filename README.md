@@ -180,8 +180,8 @@ Scalable system → can handle growth
 flowchart TD
     A[Client / Frontend] --> B[Auth Service]
 
-    B --> C{Login / Register}
-    C -->|Register| D[Store User (Hashed Password)]
+    B --> C{Login or Register}
+    C -->|Register| D[Store User - Hashed Password]
     C -->|Login| E[Verify Credentials]
     E --> F[Generate JWT Token]
 
@@ -196,13 +196,13 @@ flowchart TD
 
     K --> L{API Request Type}
 
-    L -->|Organization| M[Create / Manage Organization]
+    L -->|Organization| M[Create or Manage Organization]
 
-    L -->|Team| N[Create / Manage Team]
+    L -->|Team| N[Create or Manage Team]
     N --> O[Validate Organization Exists]
 
-    L -->|Member| P[Add / Manage Members]
-    P --> Q[Link team_id + auth_user_id]
+    L -->|Member| P[Add or Manage Members]
+    P --> Q[Link team_id and auth_user_id]
 
     M --> R[(Database)]
     O --> R
@@ -211,6 +211,3 @@ flowchart TD
     R --> S[Return Response]
     S --> T[Client]
 ```
-
-
-
