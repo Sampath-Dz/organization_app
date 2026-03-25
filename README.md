@@ -141,28 +141,28 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
+
 ```mermaid
 flowchart LR
-    Customer --> Auth
-    Customer --> Core
+    Customer -->|Login (user_id)| TokenAPI[Token API]
+    TokenAPI -->|JWT Token| Customer
 
-    %% Auth Flow
-    Auth --> Router1[Router]
-    Router1 -->|Users, Roles, Types, Assignments, Token APIs| Service1[Service]
-    Service1 --> Model1[Model]
-    Model1 --> DB[(Database)]
-    DB --> Model1
-    Model1 --> Service1
-    Service1 --> Router1
-    Router1 --> Customer
+    Customer -->|JWT + Request| Auth
+    Customer -->|JWT + Request| Core
 
-    %% Core Flow
-    Core --> Router2[Router]
-    Router2 -->|Organizations, Teams, Members APIs| Service2[Service]
-    Service2 --> Model2[Model]
-    Model2 --> DB
-    DB --> Model2
-    Model2 --> Service2
-    Service2 --> Router2
-    Router2 --> Customer
+    %% Auth APIs
+    Auth -->|Users APIs\nRoles APIs\nTypes APIs\nAssignments APIs| AuthService[Service]
+    AuthService --> DB[(Database)]
+    DB --> AuthService
+    AuthService --> Auth
+
+    %% Core APIs
+    Core -->|Organizations APIs\nTeams APIs\nMembers APIs| CoreService[Service]
+    CoreService --> DB
+    DB --> CoreService
+    CoreService --> Core
+
+    Auth --> Customer
 ```
+    Core --> Customer
+
