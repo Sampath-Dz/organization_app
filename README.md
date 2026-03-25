@@ -148,7 +148,7 @@ flowchart LR
     Client --> CoreRouter
 
     %% ================= AUTH SERVICE =================
-    subgraph AuthService [Auth Service (auth/auth_server)]
+    subgraph AuthService [Auth Service - auth/auth_server]
 
         AuthRouter[Routers]
         
@@ -157,7 +157,7 @@ flowchart LR
             Roles[Roles APIs]
             Types[Types APIs]
             Assignments[Assignments APIs]
-            Token[Token APIs\nPOST /token\nPOST /token/decode]
+            Token[Token APIs - POST /token, POST /token/decode]
         end
 
         AuthRouter --> Users
@@ -179,7 +179,7 @@ flowchart LR
 
 
     %% ================= CORE SERVICE =================
-    subgraph CoreService [Core Service (core_service/core_apis_server)]
+    subgraph CoreService [Core Service - core_service/core_apis_server]
 
         CoreRouter[Routers]
 
@@ -204,3 +204,5 @@ flowchart LR
         CoreRouter --> CExceptions[Exceptions]
     end
 ```
+
+
