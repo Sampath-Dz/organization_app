@@ -145,11 +145,11 @@ Custom exceptions are implemented for better error handling:
 
 ```mermaid
 flowchart LR
-    Client --> AuthRouter
-    Client --> CoreRouter
+    Customer --> AuthRouter
+    Customer --> CoreRouter
 
     %% Auth Service Flow
-    AuthRouter --> AuthServices
+    AuthRouter -->|Users, Roles, Types, Assignments, Token| AuthServices
     AuthServices --> AuthModels
     AuthModels --> DB[(Database)]
 
@@ -157,14 +157,11 @@ flowchart LR
     AuthRouter --> AuthUtils
 
     %% Core Service Flow
-    CoreRouter --> CoreServices
+    CoreRouter -->|Organizations, Teams, Members| CoreServices
     CoreServices --> CoreModels
     CoreModels --> DB
 
     CoreRouter --> CoreSchemas
     CoreRouter --> CoreUtils
-
-    %% API grouping labels
-    AuthRouter -->|Users, Roles, Types, Assignments, Token| AuthServices
-    CoreRouter -->|Organizations, Teams, Members| CoreServices
 ```
+
