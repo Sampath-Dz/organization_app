@@ -145,24 +145,11 @@ Custom exceptions are implemented for better error handling:
 
 ```mermaid
 flowchart LR
-    Customer -->|Login user_id| TokenAPI[Token API]
-    TokenAPI -->|JWT Token| Customer
+    Customer --> Auth
+    Customer --> Core
 
-    Customer -->|JWT Request| Auth
-    Customer -->|JWT Request| Core
-
-    %% Auth APIs
-    Auth -->|Users APIs, Roles APIs, Types APIs, Assignments APIs| AuthService[Service]
-    AuthService --> DB[(Database)]
-    DB --> AuthService
-    AuthService --> Auth
-
-    %% Core APIs
-    Core -->|Organizations APIs, Teams APIs, Members APIs| CoreService[Service]
-    CoreService --> DB
-    DB --> CoreService
-    CoreService --> Core
-
-    Auth --> Customer
-    Core --> Customer
+    Auth -->|Users APIs, Roles APIs, Types APIs, Assignments APIs, Token APIs| Customer
+    Core -->|Organizations APIs, Teams APIs, Members APIs| Customer
 ```
+
+
