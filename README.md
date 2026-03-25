@@ -141,68 +141,13 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
+## 🏗️ System Architecture
+
 ```mermaid
 flowchart LR
+    Client --> Auth
+    Client --> Core
 
-    Client --> AuthRouter
-    Client --> CoreRouter
-
-    %% ================= AUTH SERVICE =================
-    subgraph AuthService [Auth Service - auth/auth_server]
-
-        AuthRouter[Routers]
-        
-        subgraph AuthModules
-            Users[Users APIs]
-            Roles[Roles APIs]
-            Types[Types APIs]
-            Assignments[Assignments APIs]
-            Token[Token APIs - POST /token, POST /token/decode]
-        end
-
-        AuthRouter --> Users
-        AuthRouter --> Roles
-        AuthRouter --> Types
-        AuthRouter --> Assignments
-        AuthRouter --> Token
-
-        AuthRouter --> AuthServices[Services]
-        AuthServices --> AuthModels[Models]
-        AuthModels --> DB[(Database)]
-
-        AuthRouter --> Schemas[Schemas]
-        AuthRouter --> Deps[Dependencies]
-        AuthRouter --> Utils[Utils]
-        AuthRouter --> Globals[Globals]
-        AuthRouter --> Exceptions[Exceptions]
-    end
-
-
-    %% ================= CORE SERVICE =================
-    subgraph CoreService [Core Service - core_service/core_apis_server]
-
-        CoreRouter[Routers]
-
-        subgraph CoreModules
-            Org[Organizations APIs]
-            Teams[Teams APIs]
-            Members[Members APIs]
-        end
-
-        CoreRouter --> Org
-        CoreRouter --> Teams
-        CoreRouter --> Members
-
-        CoreRouter --> CoreServices[Services]
-        CoreServices --> CoreModels[Models]
-        CoreModels --> DB
-
-        CoreRouter --> CSchemas[Schemas]
-        CoreRouter --> CDeps[Dependencies]
-        CoreRouter --> CUtils[Utils]
-        CoreRouter --> CGlobals[Globals]
-        CoreRouter --> CExceptions[Exceptions]
-    end
+    Auth -->|Users, Roles, Types, Assignments, Token| DB[(Database)]
+    Core -->|Organizations, Teams, Members| DB
 ```
-
-
