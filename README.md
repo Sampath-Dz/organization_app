@@ -141,10 +141,6 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
-## 🏗️ System Architecture
-
-## 🏗️ System Architecture
-
 ```mermaid
 flowchart LR
     Customer --> Auth
@@ -152,13 +148,21 @@ flowchart LR
 
     %% Auth Flow
     Auth --> Router1[Router]
-    Router1 -->|Users, Roles, Types, Assignments, Token| Service1[Service]
+    Router1 -->|Users, Roles, Types, Assignments, Token APIs| Service1[Service]
     Service1 --> Model1[Model]
     Model1 --> DB[(Database)]
+    DB --> Model1
+    Model1 --> Service1
+    Service1 --> Router1
+    Router1 --> Customer
 
     %% Core Flow
     Core --> Router2[Router]
-    Router2 -->|Organizations, Teams, Members| Service2[Service]
+    Router2 -->|Organizations, Teams, Members APIs| Service2[Service]
     Service2 --> Model2[Model]
     Model2 --> DB
+    DB --> Model2
+    Model2 --> Service2
+    Service2 --> Router2
+    Router2 --> Customer
 ```
