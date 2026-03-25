@@ -129,46 +129,6 @@ Custom exceptions are implemented for better error handling:
 * ConflictException
 
 ----------------------------------------------------------------------
-##  Project Structure
-
-organization_application/
-│
-├── auth/
-│   └── auth_server/
-│       ├── routers/            # API endpoints (users, roles, token, types, assignments)
-│       ├── services/           # Business logic (UserService, TokenService, etc.)
-│       ├── models/             # SQLAlchemy models
-│       ├── schemas/            # Pydantic schemas (request/response validation)
-│       ├── middleware/         # Logging, authentication middleware
-│       ├── utils/              # Helpers (password hash, JWT, timestamps)
-│       ├── alembic/            # Database migrations
-│       ├── dependencies.py     # DB session dependency
-│       ├── settings.py         # Environment/config settings
-│       ├── globals.py          # Global constants
-│       ├── exceptions.py       # Custom exceptions (Auth errors)
-│       ├── main.py             # FastAPI app entry point
-│       └── __init__.py
-│
-├── core_service/
-│   └── core_apis_server/
-│       ├── routers/            # APIs (organizations, teams, members)
-│       ├── services/           
-│       ├── models/             
-│       ├── schemas/            
-│       ├── middleware/         
-│       ├── utils/              
-│       ├── alembic/            
-│       ├── dependencies/       
-│       ├── settings.py         
-│       ├── globals.py          
-│       ├── exceptions.py      
-│       ├── main.py             
-│       └── __init__.py
-│
-├── .gitignore
-├── pyproject.toml
-└── README.md
-------------------------------------------------------------
 
 ##  How to Run
 
@@ -178,6 +138,77 @@ organization_application/
 
 3. Run Core Service:
    uvicorn main:app --reload --port 8002
-------------------------------------------------
+---------------------------------------------------
+## System Architecture:
+
+```mermaid
+flowchart LR
+    Client --> AuthService[Auth Service]
+    Client --> CoreService[Core Service]
+
+    AuthService --> Users
+    AuthService --> Roles
+    AuthService --> Types
+    AuthService --> Assignments
+    AuthService --> Token
+
+    CoreService --> Organizations
+    CoreService --> Teams
+    CoreService --> Members
+
+    Users --> DB[(Database)]
+    Roles --> DB
+    Types --> DB
+    Assignments --> DB
+
+    Organizations --> DB
+    Teams --> DB
+    Members --> DB
+```
+
+## Auth Service APIs:
+
+| ------ | ------------------------- |
+| POST   | /auth/v1/users            |
+| GET    | /auth/v1/users            |
+| GET    | /auth/v1/users/{id}       |
+| PATCH  | /auth/v1/users/{id}       |
+| DELETE | /auth/v1/users/{id}       |
+| POST   | /auth/v1/token            |
+| POST   | /auth/v1/token/decode     |
+| POST   | /auth/v1/roles            |
+| GET    | /auth/v1/roles            |
+| PUT    | /auth/v1/roles/{id}       |
+| DELETE | /auth/v1/roles/{id}       |
+| POST   | /auth/v1/types            |
+| GET    | /auth/v1/types            |
+| PUT    | /auth/v1/types/{id}       |
+| DELETE | /auth/v1/types/{id}       |
+| POST   | /auth/v1/assignments      |
+| GET    | /auth/v1/assignments      |
+| PUT    | /auth/v1/assignments/{id} |
+| DELETE | /auth/v1/assignments/{id} |
+
+
+## Core Service APIs:
+
+| ------ | --------------------------- |
+| POST   | /core/v1/organizations      |
+| GET    | /core/v1/organizations      |
+| GET    | /core/v1/organizations/{id} |
+| PATCH  | /core/v1/organizations/{id} |
+| DELETE | /core/v1/organizations/{id} |
+| POST   | /core/v1/teams              |
+| GET    | /core/v1/teams              |
+| GET    | /core/v1/teams/{id}         |
+| PATCH  | /core/v1/teams/{id}         |
+| DELETE | /core/v1/teams/{id}         |
+| POST   | /core/v1/members            |
+| GET    | /core/v1/members            |
+| GET    | /core/v1/members/{id}       |
+| PATCH  | /core/v1/members/{id}       |
+| DELETE | /core/v1/members/{id}       |
+
+
 
 
