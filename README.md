@@ -141,28 +141,28 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
+## 🏗️ System Architecture
 
 ```mermaid
 flowchart LR
-    Customer -->|Login (user_id)| TokenAPI[Token API]
+    Customer -->|Login user_id| TokenAPI[Token API]
     TokenAPI -->|JWT Token| Customer
 
-    Customer -->|JWT + Request| Auth
-    Customer -->|JWT + Request| Core
+    Customer -->|JWT Request| Auth
+    Customer -->|JWT Request| Core
 
     %% Auth APIs
-    Auth -->|Users APIs\nRoles APIs\nTypes APIs\nAssignments APIs| AuthService[Service]
+    Auth -->|Users APIs, Roles APIs, Types APIs, Assignments APIs| AuthService[Service]
     AuthService --> DB[(Database)]
     DB --> AuthService
     AuthService --> Auth
 
     %% Core APIs
-    Core -->|Organizations APIs\nTeams APIs\nMembers APIs| CoreService[Service]
+    Core -->|Organizations APIs, Teams APIs, Members APIs| CoreService[Service]
     CoreService --> DB
     DB --> CoreService
     CoreService --> Core
 
     Auth --> Customer
-```
     Core --> Customer
-
+```
