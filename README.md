@@ -9,127 +9,164 @@ The system is divided into two main services:
 1. **Auth Service** → Handles authentication and user management
 2. **Core Service** → Handles organization, teams, and members
 
----------------------------
+## System Flow (Auth Service + Core Service)
 
-# Services:
+This project follows a microservices architecture with two main services:
 
-1.Auth Service (`auth/auth_server`)
+Auth Service → Handles authentication (who you are)
+Core Service → Handles data (what you own)
+JWT Token → Connects both services
 
-Responsible for:
+---
 
-* User Management
-* Authentication (JWT Token)
-* Role Management
-* Type Management
-* Assignments
+## Overall Flow
 
-APIs:
+Client (Frontend)
+↓
+Login / Register (Auth Service)
+↓
+JWT Token Generated
+↓
+Client stores token
+↓
+Client sends request with token
+↓
+Core Service verifies token
+↓
+Core Service processes request
+↓
+Response sent back to client
 
-```
-POST /auth/v1/users
-GET /auth/v1/users
-GET /auth/v1/users/{id}
-PATCH /auth/v1/users/{id}
-DELETE /auth/v1/users/{id}
-POST /auth/v1/token
-POST /auth/v1/token/decode
-POST /auth/v1/roles
-GET /auth/v1/roles
-PUT /auth/v1/roles/{id}
-DELETE /auth/v1/roles/{id}
-POST /auth/v1/types
-GET /auth/v1/types
-PUT /auth/v1/types/{id}
-DELETE /auth/v1/types/{id}
-POST /auth/v1/assignments
-GET /auth/v1/assignments
-PUT /auth/v1/assignments/{id}
-DELETE /auth/v1/assignments/{id}
+---
 
-```
-----------------------
+## Auth Service Flow
 
-2.Core Service (`core_service/core_apis_server`)
+### 1. User Management
 
-Responsible for:
+User sends name, email, password
+Password is hashed
+Data stored securely in database
+Password is never returned
 
-* Organization Management
-* Team Management
-* Member Management
+### 2. User Login
 
-APIs:
-```
-POST /core/v1/organizations
-GET /core/v1/organizations
-GET /core/v1/organizations/{id}
-PATCH /core/v1/organizations/{id}
-DELETE /core/v1/organizations/{id}
-POST /core/v1/teams
-GET /core/v1/teams
-GET /core/v1/teams/{id}
-PATCH /core/v1/teams/{id}
-DELETE /core/v1/teams/{id}
-POST /core/v1/members
-GET /core/v1/members
-GET /core/v1/members/{id}
-PATCH /core/v1/members/{id}
-DELETE /core/v1/members/{id}
+User provides email and password
+Password is verified
+Access Token is generated
 
-```
----------------------------
+### 3. Token Usage
 
-##  Request Flow
+Access token is used for API calls
+Each request is verified:
+Token validity checked
+Expiry checked
 
-Each API follows this flow:
+### 4. Authorization (Permissions)
 
-Request → Middleware → Router → Service → Model → Database → Middleware → Response
+Users get permissions using:
+Roles (admin, manager, user)
+Types (organization, team)
+Assignments (link user + role + resource)
 
-* Router → Handles incoming API requests
-* Service → Contains business logic
-* Model → Interacts with database (ORM)
-* Database → Stores application data
+### 5. Soft Delete
 
------------------------------
+Data is not permanently deleted
+deleted_at field is used
+Only active records are used
 
-##  Authentication Flow
+---
 
-1. User generates token using (`/auth/v1/token`)
-2. Auth service returns JWT token
-3. Client sends token in request headers
-4. Core APIs validate token before processing
+## Core Service Flow
 
--------------------------
+### 1. Authentication
 
-##  Database Design
+Every request must include JWT token
+Token is decoded to get user_id
 
-# Auth Service Tables:
+### 2. Organization APIs
 
-* Users
-* Roles
-* Types
-* Assignments
+Create organization
+Check duplicates
+Store details
 
-# Core Service Tables:
+### 3. Team APIs
 
-* Organizations
-* Teams
-* Members
+Teams belong to organizations
+Organization must exist
 
-All tables support (soft delete) using:
-`deleted_at`
---------------------------
+### 4. Member APIs
 
-## Exception Handling
+Members are linked using:
+team_id
+auth_user_id (from Auth Service)
 
-Custom exceptions are implemented for better error handling:
+### 5. Data Handling
 
-* NotFoundException
-* AlreadyExistsException
-* UnauthorizedException
-* ConflictException
+Only manages:
+Organizations
+Teams
+Members
 
-----------------------------------------------------------------------
+### 6. Soft Delete
 
+Same as Auth Service
+Records are hidden, not removed
+
+---
+
+## How Auth and Core Services Connect?
+
+Auth Service → generates JWT token
+Core Service → verifies token using same secret key
+user_id from token is used for linking data
+
+-----------------------------------------------------
+
+## Request Flow (Detailed)
+
+Client Request
+↓
+Middleware (CORS, Logging)
+↓
+Router (API endpoint)
+↓
+Token Verification
+↓
+Service Layer (Business Logic)
+↓
+Database Query
+↓
+Response to Client
+
+---------------------------------
+
+## Key Concepts
+
+Users → Registered users
+Roles → Define permissions
+Types → Define level
+Assignments → Link user + role + resource
+
+--------------------------------------------
+## Security Highlights 
+
+Passwords are hashed → protects user passwords
+JWT tokens verified → prevents unauthorized access
+Access tokens expire → limits misuse
+Sensitive data hidden → avoids data leaks
+
+-------------------------------------------------------------
+
+Architecture Summary (How your system is designed)
+
+Focus: System design / structure
+
+Microservices-based design → split into Auth & Core
+Separate services → independent scaling
+JWT-based authentication → stateless system
+Scalable system → can handle growth
+
+-----------------------------------------------------------------
 ##  How to Run
 
 1. Install dependencies
@@ -138,24 +175,5 @@ Custom exceptions are implemented for better error handling:
 
 3. Run Core Service:
    uvicorn main:app --reload --port 8002
----------------------------------------------------
-## System Architecture:
 
 
-```mermaid
-flowchart LR
-    Customer --> Auth
-    Customer --> Core
-
-    %% Auth Flow
-    Auth --> Router1[Router]
-    Router1 -->|Users, Roles, Types, Assignments, Token| Service1[Service]
-    Service1 --> Model1[Model]
-    Model1 --> DB[(Database)]
-
-    %% Core Flow
-    Core --> Router2[Router]
-    Router2 -->|Organizations, Teams, Members| Service2[Service]
-    Service2 --> Model2[Model]
-    Model2 --> DB
-```
