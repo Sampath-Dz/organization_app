@@ -141,13 +141,25 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
-## 🏗️ System Architecture
 
 ```mermaid
 flowchart LR
     Client --> Auth
     Client --> Core
 
-    Auth -->|Users, Roles, Types, Assignments, Token| DB[(Database)]
-    Core -->|Organizations, Teams, Members| DB
+    %% Auth Service
+    subgraph Auth Service
+        AR[Routers] --> AS[Services]
+        AS --> AM[Models]
+        AR --> ASch[Schemas]
+        AS --> DB[(Database)]
+    end
+
+    %% Core Service
+    subgraph Core Service
+        CR[Routers] --> CS[Services]
+        CS --> CM[Models]
+        CR --> CSch[Schemas]
+        CS --> DB
+    end
 ```
