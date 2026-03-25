@@ -141,74 +141,28 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
+## 🏗️ System Architecture
+
 ```mermaid
 flowchart LR
-    Client --> AuthService[Auth Service]
-    Client --> CoreService[Core Service]
 
-    AuthService --> Users
-    AuthService --> Roles
-    AuthService --> Types
-    AuthService --> Assignments
-    AuthService --> Token
+    Client --> AuthService
+    Client --> CoreService
 
-    CoreService --> Organizations
-    CoreService --> Teams
-    CoreService --> Members
+    subgraph AuthService [Auth Service]
+        A1[Users APIs]
+        A2[Roles APIs]
+        A3[Types APIs]
+        A4[Assignments APIs]
+        A5[Token APIs]
+    end
 
-    Users --> DB[(Database)]
-    Roles --> DB
-    Types --> DB
-    Assignments --> DB
+    subgraph CoreService [Core Service]
+        C1[Organizations APIs]
+        C2[Teams APIs]
+        C3[Members APIs]
+    end
 
-    Organizations --> DB
-    Teams --> DB
-    Members --> DB
+    AuthService --> DB[(Database)]
+    CoreService --> DB
 ```
-
-## Auth Service APIs:
-
-| ------ | ------------------------- |
-| POST   | /auth/v1/users            |
-| GET    | /auth/v1/users            |
-| GET    | /auth/v1/users/{id}       |
-| PATCH  | /auth/v1/users/{id}       |
-| DELETE | /auth/v1/users/{id}       |
-| POST   | /auth/v1/token            |
-| POST   | /auth/v1/token/decode     |
-| POST   | /auth/v1/roles            |
-| GET    | /auth/v1/roles            |
-| PUT    | /auth/v1/roles/{id}       |
-| DELETE | /auth/v1/roles/{id}       |
-| POST   | /auth/v1/types            |
-| GET    | /auth/v1/types            |
-| PUT    | /auth/v1/types/{id}       |
-| DELETE | /auth/v1/types/{id}       |
-| POST   | /auth/v1/assignments      |
-| GET    | /auth/v1/assignments      |
-| PUT    | /auth/v1/assignments/{id} |
-| DELETE | /auth/v1/assignments/{id} |
-
-
-## Core Service APIs:
-
-| ------ | --------------------------- |
-| POST   | /core/v1/organizations      |
-| GET    | /core/v1/organizations      |
-| GET    | /core/v1/organizations/{id} |
-| PATCH  | /core/v1/organizations/{id} |
-| DELETE | /core/v1/organizations/{id} |
-| POST   | /core/v1/teams              |
-| GET    | /core/v1/teams              |
-| GET    | /core/v1/teams/{id}         |
-| PATCH  | /core/v1/teams/{id}         |
-| DELETE | /core/v1/teams/{id}         |
-| POST   | /core/v1/members            |
-| GET    | /core/v1/members            |
-| GET    | /core/v1/members/{id}       |
-| PATCH  | /core/v1/members/{id}       |
-| DELETE | /core/v1/members/{id}       |
-
-
-
-
