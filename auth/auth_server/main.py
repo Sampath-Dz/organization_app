@@ -15,7 +15,6 @@ LOG = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     LOG.info("Starting Auth Service...")
-    postgres_db.create_schema()
     LOG.info("Database schema ready.")
     yield
     LOG.info("Shutting down Auth Service.")

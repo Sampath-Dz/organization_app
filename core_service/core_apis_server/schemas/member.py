@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict
+from typing import Optional
 
 class MemberCreate(BaseModel):
     auth_user_id: str
