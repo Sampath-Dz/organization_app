@@ -157,9 +157,7 @@ Sensitive data hidden → avoids data leaks
 
 -------------------------------------------------------------
 
-Architecture Summary (How your system is designed)
-
-Focus: System design / structure
+## Architecture Summary (How your system is designed)
 
 Microservices-based design → split into Auth & Core
 Separate services → independent scaling
@@ -175,5 +173,44 @@ Scalable system → can handle growth
 
 3. Run Core Service:
    uvicorn main:app --reload --port 8002
+-----------------------------------------------------------
+## System Architecture
+
+```mermaid
+flowchart TD
+    A[Client / Frontend] --> B[Auth Service]
+
+    B --> C{Login / Register}
+    C -->|Register| D[Store User (Hashed Password)]
+    C -->|Login| E[Verify Credentials]
+    E --> F[Generate JWT Token]
+
+    F --> G[Client Stores Token]
+
+    G --> H[Client Sends Request with JWT]
+    H --> I[Core Service]
+
+    I --> J[Verify JWT Token]
+    J -->|Valid| K[Extract user_id]
+    J -->|Invalid| X[Reject Request]
+
+    K --> L{API Request Type}
+
+    L -->|Organization| M[Create / Manage Organization]
+
+    L -->|Team| N[Create / Manage Team]
+    N --> O[Validate Organization Exists]
+
+    L -->|Member| P[Add / Manage Members]
+    P --> Q[Link team_id + auth_user_id]
+
+    M --> R[(Database)]
+    O --> R
+    Q --> R
+
+    R --> S[Return Response]
+    S --> T[Client]
+```
+
 
 
