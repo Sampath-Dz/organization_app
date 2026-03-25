@@ -141,28 +141,66 @@ Custom exceptions are implemented for better error handling:
 ---------------------------------------------------
 ## System Architecture:
 
-## 🏗️ System Architecture
-
 ```mermaid
 flowchart LR
 
-    Client --> AuthService
-    Client --> CoreService
+    Client --> AuthRouter
+    Client --> CoreRouter
 
-    subgraph AuthService [Auth Service]
-        A1[Users APIs]
-        A2[Roles APIs]
-        A3[Types APIs]
-        A4[Assignments APIs]
-        A5[Token APIs]
+    %% ================= AUTH SERVICE =================
+    subgraph AuthService [Auth Service (auth/auth_server)]
+
+        AuthRouter[Routers]
+        
+        subgraph AuthModules
+            Users[Users APIs]
+            Roles[Roles APIs]
+            Types[Types APIs]
+            Assignments[Assignments APIs]
+            Token[Token APIs\nPOST /token\nPOST /token/decode]
+        end
+
+        AuthRouter --> Users
+        AuthRouter --> Roles
+        AuthRouter --> Types
+        AuthRouter --> Assignments
+        AuthRouter --> Token
+
+        AuthRouter --> AuthServices[Services]
+        AuthServices --> AuthModels[Models]
+        AuthModels --> DB[(Database)]
+
+        AuthRouter --> Schemas[Schemas]
+        AuthRouter --> Deps[Dependencies]
+        AuthRouter --> Utils[Utils]
+        AuthRouter --> Globals[Globals]
+        AuthRouter --> Exceptions[Exceptions]
     end
 
-    subgraph CoreService [Core Service]
-        C1[Organizations APIs]
-        C2[Teams APIs]
-        C3[Members APIs]
-    end
 
-    AuthService --> DB[(Database)]
-    CoreService --> DB
+    %% ================= CORE SERVICE =================
+    subgraph CoreService [Core Service (core_service/core_apis_server)]
+
+        CoreRouter[Routers]
+
+        subgraph CoreModules
+            Org[Organizations APIs]
+            Teams[Teams APIs]
+            Members[Members APIs]
+        end
+
+        CoreRouter --> Org
+        CoreRouter --> Teams
+        CoreRouter --> Members
+
+        CoreRouter --> CoreServices[Services]
+        CoreServices --> CoreModels[Models]
+        CoreModels --> DB
+
+        CoreRouter --> CSchemas[Schemas]
+        CoreRouter --> CDeps[Dependencies]
+        CoreRouter --> CUtils[Utils]
+        CoreRouter --> CGlobals[Globals]
+        CoreRouter --> CExceptions[Exceptions]
+    end
 ```
